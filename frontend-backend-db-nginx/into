@@ -1,0 +1,4 @@
+#!/bin/sh
+# ran as into <container_name>
+# ex: ./into backend
+sudo docker compose exec $1 /bin/bash

@@ -1,0 +1,4 @@
+#!/bin/sh
+# remove all references
+
+sudo docker compose down -v --remove-orphans

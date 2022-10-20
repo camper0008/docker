@@ -1,0 +1,17 @@
+{
+    "name": "example-frontend",
+    "version": "0.0.0",
+    "description": "An example frontend to be built by Docker.",
+    "repository": "https://github.com/camper0008/docker",
+    "author": "Theis Pieter Hollebeek <tphollebeek@gmail.com>",
+    "license": "Unlicense",
+    "private": false,
+    "dependencies": {
+        "esbuild": "^0.15.12"
+    },
+    "scripts": {
+        "build:css": "esbuild --minify --bundle src/style.css --outfile=public/style.min.css",
+        "build:js": "esbuild --minify --bundle src/script.js --outfile=public/script.min.js",
+        "build": "npm run build:css && npm run build:js"
+    }
+}

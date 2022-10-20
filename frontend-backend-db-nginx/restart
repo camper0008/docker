@@ -1,0 +1,5 @@
+#!/bin/sh
+
+sudo docker compose down -v --remove-orphans
+sudo docker compose build
+sudo docker compose up -d

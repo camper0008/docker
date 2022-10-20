@@ -1,0 +1,40 @@
+services:
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    volumes:
+      - frontend_static:/docker/frontend/public
+  backend:
+    container_name: backend
+    build: ./backend
+    command: "./example_backend"
+    depends_on: 
+      - db
+    expose:
+      - "8080" # expose backend to nginx
+    environment:
+      - PORT=8080
+  db:
+    image: mariadb
+    container_name: mariadb
+    environment:
+      - MARIADB_RANDOM_ROOT_PASSWORD="1"
+    expose:
+      - "3306" # expose db to backend
+    ports: 
+      - "3306:3306"
+    volumes:
+      - ./mariadb/init:/docker-entrypoint-initdb.d # the db creation files
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports: 
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    volumes:
+      - frontend_static:/usr/share/nginx/frontend
+      - ./nginx/templates:/etc/nginx/templates
+volumes:
+  frontend_static:
