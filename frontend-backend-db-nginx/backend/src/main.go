@@ -40,14 +40,12 @@ func amountRequestHandler(rw http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 func mySqlConnection() *sql.DB {
-	mariadb_user := "example_user"
-	mariadb_pass := "example_password"
-	mariadb_host := "db" // this refers to the mariadb container from docker
-	mariadb_db := "example_db"
+	user := os.Getenv("DB_USER")
+	pass := os.Getenv("DB_PASSWORD")
+	host := os.Getenv("DB_HOST")
+	database := os.Getenv("DB_DATABASE")
 
-	connection := fmt.Sprintf("%s:%s@(%s)/%s?charset=utf8&parseTime=True&loc=Local", mariadb_user, mariadb_pass, mariadb_host, mariadb_db)
-
-	log.Printf("attempting connection to %q:", connection)
+	connection := fmt.Sprintf("%s:%s@(%s)/%s?charset=utf8&parseTime=True&loc=Local", user, pass, host, database)
 
 	db, err := sql.Open("mysql", connection)
 	if err != nil {
@@ -57,15 +55,22 @@ func mySqlConnection() *sql.DB {
 	return db
 }
 
+func requiredEnvVars() {
+	env_vars := []string{"PORT", "DB_HOST", "DB_USER", "DB_PASSWORD", "DB_DATABASE"}
+	for _, env_var := range env_vars {
+		if os.Getenv(env_var) == "" {
+			log.Fatal(fmt.Errorf("%s environment variable undefined", env_var))
+		}
+	}
+}
+
 func main() {
 	db := mySqlConnection()
 	http.HandleFunc("/increment", func(rw http.ResponseWriter, r *http.Request) { incrementRequestHandler(rw, r, db) })
 	http.HandleFunc("/amount", func(rw http.ResponseWriter, r *http.Request) { amountRequestHandler(rw, r, db) })
 	defer db.Close()
 
-	if os.Getenv("PORT") == "" {
-		log.Fatal(fmt.Errorf("PORT environment variable undefined"))
-	}
+	requiredEnvVars()
 
 	portString := fmt.Sprintf(":%s", os.Getenv("PORT"))
 

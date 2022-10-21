@@ -4,3 +4,6 @@ backend/src/example_backend
 # ignore unneeded frontend if any
 frontend/src/node_modules
 frontend/src/public/*.min.*
+
+# .env file
+.env

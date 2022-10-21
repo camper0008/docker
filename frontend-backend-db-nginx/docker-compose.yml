@@ -11,23 +11,32 @@ services:
     depends_on: 
       - db
     expose:
-      - "8080" # expose backend to nginx
+      - "$PORT" # expose backend to nginx
     environment:
-      - PORT=8080
+      # "- ENV_VAR" is syntactic sugar for "- ENV_VAR=$ENV_VAR"
+      - PORT
+      - DB_USER
+      - DB_PASSWORD
+      - DB_DATABASE
+      # this refers to the 'db' service
+      - DB_HOST=db
   db:
+    container_name: db
     image: mariadb
-    container_name: mariadb
     environment:
-      - MARIADB_RANDOM_ROOT_PASSWORD="1"
+      - MARIADB_USER=example_user
+      - MARIADB_PASSWORD=$DB_PASSWORD
+      - MARIADB_DATABASE=example_db
+      - MARIADB_RANDOM_ROOT_PASSWORD=1
     expose:
       - "3306" # expose db to backend
-    ports: 
-      - "3306:3306"
     volumes:
       - ./mariadb/init:/docker-entrypoint-initdb.d # the db creation files
   nginx:
     image: nginx
     container_name: nginx
+    environment:
+      - BACKEND_PORT=$PORT
     ports: 
       - "80:80"
     depends_on:
