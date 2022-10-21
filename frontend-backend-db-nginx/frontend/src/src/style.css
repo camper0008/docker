@@ -1,17 +1,18 @@
 * {
     font-family: "Roboto", sans-serif;
+    color: #ccc;
+    margin: 0;
+    margin-top: 1.5rem;
 }
 
 body {
     text-align: center;
-    background-color: #222;
-    color: #eee;
+    background-color: #141414;
 }
 
 button {
     border: none;
-    background-color: #eee;
-    color: #222;
+    background-color: #242424;
     font-size: 1.5rem;
     border-radius: 0.25rem;
     cursor: pointer;
@@ -31,6 +32,6 @@ button:active {
 span#amount {
     font-family: "Roboto Mono", monospace;
     padding: 0.25em;
-    background-color: #444;
+    background-color: #242424;
     border-radius: 0.25em;
 }
