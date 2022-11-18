@@ -11,7 +11,7 @@ RUN ["go", "build", "."]
 FROM alpine:3.14.8 AS runner
 
 # create seperate user for running process as non-root
-RUN adduser --defaults runner
+RUN adduser -D runner
 USER runner
 WORKDIR /home/runner
 
