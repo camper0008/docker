@@ -1,11 +1,13 @@
 services:
   frontend:
-    container_name: frontend
+    restart: never # frontend should not restart, since it's a one-time build cycle.
     build: ./frontend
     volumes:
-      - frontend_static:/docker/frontend/public
+      # built frontend files will go in /docker/frontend/public
+      # so we make a volume to share that with the nginx server
+      - built_frontend:/docker/frontend/public 
   backend:
-    container_name: backend
+    restart: always
     build: ./backend
     command: "./example_backend"
     depends_on: 
@@ -21,7 +23,7 @@ services:
       # this refers to the 'db' service
       - DB_HOST=db
   db:
-    container_name: db
+    restart: always
     image: mariadb
     environment:
       - MARIADB_USER=example_user
@@ -31,10 +33,13 @@ services:
     expose:
       - "3306" # expose db to backend
     volumes:
-      - ./mariadb/init:/docker-entrypoint-initdb.d # the db creation files
+      # the db creation files
+      - ./mariadb/init:/docker-entrypoint-initdb.d
+      # in order to preserve data between restarts, a named volume that points to /var/lib/mysql is created
+      - mysql_data:/var/lib/mysql
   nginx:
     image: nginx
-    container_name: nginx
+    restart: always
     environment:
       - BACKEND_PORT=$PORT
     ports: 
@@ -43,7 +48,8 @@ services:
       - frontend
       - backend
     volumes:
-      - frontend_static:/usr/share/nginx/frontend
+      - built_frontend:/usr/share/nginx/frontend
       - ./nginx/templates:/etc/nginx/templates
 volumes:
-  frontend_static:
+  built_frontend:
+  mysql_data:

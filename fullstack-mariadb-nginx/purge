@@ -1,4 +1,4 @@
 #!/bin/sh
-# remove all references
 
+# remove all references by removing orphaned services and removing any related named volumes
 sudo docker compose down -v --remove-orphans
