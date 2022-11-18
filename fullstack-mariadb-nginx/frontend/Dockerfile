@@ -14,12 +14,8 @@ FROM busybox:1.34.1-musl AS runner
 # run as seperate user to prevent root access
 RUN adduser -D runner
 USER runner
-WORKDIR /home/runner
-
-# create static directory
 RUN mkdir -p /home/runner/static
-# copy from 'builder', chown to make runner the owner of the static files rather than root
+# chown to make runner the owner of the static files rather than root
 COPY --chown=runner --from=builder /src/public/* /home/runner/static/
 
-# default command
 CMD ["busybox", "httpd", "-f", "-p", "8080", "-h", "/home/runner/static"]

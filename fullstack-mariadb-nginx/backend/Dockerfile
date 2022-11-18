@@ -7,18 +7,19 @@ WORKDIR /src
 
 RUN ["go", "build", "."]
 
-# for whatever reason, it's unable to find the executable if it uses busybox or scratch as the base image, despite it appearing with ls
+# for whatever reason, it's unable to find the executable if it uses busybox or scratch as the base image, despite it showing up with ls
 FROM alpine:3.14.8 AS runner
 
 # create seperate user for running process as non-root
-RUN adduser -D runner
+RUN adduser --defaults runner
 USER runner
 WORKDIR /home/runner
 
-# copy from 'builder', chown to make runner the owner of the built binary
-COPY --chown=runner --from=builder /src/example_backend /home/runner
+# chown to make runner the owner of the built binary
+COPY --from=builder --chown=runner /src/example_backend /home/runner
 
 # pass environment variables to current container
+# this should be done last, since it allows docker to cache more efficiently
 ENV DB_USER=$DB_USER
 ENV DB_PASSWORD=$DB_PASSWORD
 ENV DB_DATABASE=$DB_DATABASE
