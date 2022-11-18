@@ -12,7 +12,7 @@ services:
     expose:
       - 8080 # since we configured port to be 8080 in backend/src/main.go
     environment:
-      # "- ENV_VAR" is syntactic sugar for "- ENV_VAR=$ENV_VAR"
+      # "- ENV_VAR" is syntax sugar for "- ENV_VAR=$ENV_VAR"
       - DB_USER
       - DB_PASSWORD
       - DB_DATABASE
