@@ -1,29 +1,25 @@
 services:
   frontend:
-    restart: never # frontend should not restart, since it's a one-time build cycle.
+    restart: unless-stopped
     build: ./frontend
-    volumes:
-      # built frontend files will go in /docker/frontend/public
-      # so we make a volume to share that with the nginx server
-      - built_frontend:/docker/frontend/public 
+    expose:
+      - 8080 # since we configured frontend port to be 8080 in frontend/Dockerfile
   backend:
-    restart: always
+    restart: unless-stopped
     build: ./backend
-    command: "./example_backend"
     depends_on: 
       - db
     expose:
-      - "$PORT" # expose backend to nginx
+      - 8080 # since we configured port to be 8080 in backend/src/main.go
     environment:
       # "- ENV_VAR" is syntactic sugar for "- ENV_VAR=$ENV_VAR"
-      - PORT
       - DB_USER
       - DB_PASSWORD
       - DB_DATABASE
       # this refers to the 'db' service
       - DB_HOST=db
   db:
-    restart: always
+    restart: unless-stopped
     image: mariadb
     environment:
       - MARIADB_USER=example_user
@@ -39,17 +35,13 @@ services:
       - mysql_data:/var/lib/mysql
   nginx:
     image: nginx
-    restart: always
-    environment:
-      - BACKEND_PORT=$PORT
+    restart: unless-stopped
     ports: 
       - "80:80"
     depends_on:
       - frontend
       - backend
     volumes:
-      - built_frontend:/usr/share/nginx/frontend
       - ./nginx/templates:/etc/nginx/templates
 volumes:
-  built_frontend:
   mysql_data:

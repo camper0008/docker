@@ -56,7 +56,7 @@ func mySqlConnection() *sql.DB {
 }
 
 func requiredEnvVars() {
-	env_vars := []string{"PORT", "DB_HOST", "DB_USER", "DB_PASSWORD", "DB_DATABASE"}
+	env_vars := []string{"DB_HOST", "DB_USER", "DB_PASSWORD", "DB_DATABASE"}
 	for _, env_var := range env_vars {
 		if os.Getenv(env_var) == "" {
 			log.Fatal(fmt.Errorf("%s environment variable undefined", env_var))
@@ -72,7 +72,5 @@ func main() {
 
 	requiredEnvVars()
 
-	portString := fmt.Sprintf(":%s", os.Getenv("PORT"))
-
-	log.Fatal(http.ListenAndServe(portString, nil))
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
