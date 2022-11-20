@@ -4,11 +4,11 @@ Basic image ment for testing with [self-hosted container registry](https://githu
 
 Short guide in use follows.
 
-**NOTICE: Watchtower works by pulling and restarting whenever the SHA256 digest of an image changes, it does not change between tags. Thus we use the :latest tag to update**
+**NOTICE: Watchtower works by pulling and restarting whenever the SHA256 digest of an image changes, it does not change between tags. Thus we use the :latest tag to update.**
 
 ## Running watchtower + registry
 
-**NOTICE: These do not have to be run on the same machine, however, i only have one seperate machine available to me, so for me they are**
+**NOTICE: These do not have to be run on the same machine, however, I only have one seperate machine available to me, so for me they are.**
 
 ### Watchtower
 
@@ -47,19 +47,21 @@ If your docker registry is hosted on another machine than your own,
 you will either need a https certificate for the domain pointing to it,
 or include this in your /etc/docker/daemon.json file, and then restart the docker service:
 
-By default 127.0.0.1 is an insecure registry, so you don't need to do it for localhost.
+By default 127.0.0.1 is an insecure registry, so you don't need to do it if your development machine, registry machine and watchtower/container machine is the same.
 
 ```json
 {
-  // ...
+  ...
   "insecure-registries": ["REGISTRY_HOST_IP:5000"]
-  // ...
+  ...
 }
 ```
 
 You can verify it worked by running `docker info` and seeing `REGISTRY_HOST_IP:5000` under insecure registries.
 
-### Build + Push (on development machine)
+### Build + Push
+
+**NOTICE: this should be done on your development machine.**
 
 Build and tag as `.../my-img:v1` and `.../my-img`.
 
@@ -77,7 +79,7 @@ docker push REGISTRY_HOST_IP:5000/my-org/my-img
 
 ### Pull + Run
 
-**NOTICE: this should be done on the machine running watchtower**
+**NOTICE: this should be done on the machine running watchtower.**
 
 ```
 docker run -d -p 80:8080 --name "test-image" --restart=always REGISTRY_HOST_IP:5000/my-org/my-img
